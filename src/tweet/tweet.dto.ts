@@ -15,4 +15,6 @@ export class TweetRO {
   url_photo: string;
   url_tweet: string;
   author: UserRO;
+  upvotes?: UserRO[];
+  downvotes?: UserRO[];
 }

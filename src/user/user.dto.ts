@@ -28,4 +28,5 @@ export class UserRO {
   updated: Date;
   token?: string;
   tweets?: TweetEntity[];
+  bookmarks?: TweetEntity[];
 }

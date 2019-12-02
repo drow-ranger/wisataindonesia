@@ -4,7 +4,9 @@ import {
     CreateDateColumn, 
     Column, 
     UpdateDateColumn, 
-    ManyToOne} 
+    ManyToOne,
+    ManyToMany,
+    JoinTable} 
 from "typeorm";
 import { UserEntity } from "src/user/user.entity";
 
@@ -35,4 +37,16 @@ export class TweetEntity {
         type => UserEntity,
         author => author.tweets)
     author: UserEntity;
+    
+    @ManyToMany(
+        type => UserEntity,
+        { cascade: true })
+    @JoinTable()
+    upvotes: UserEntity[];
+
+    @ManyToMany(
+        type => UserEntity,
+        { cascade: true })
+    @JoinTable()
+    downvotes: UserEntity[];
 }

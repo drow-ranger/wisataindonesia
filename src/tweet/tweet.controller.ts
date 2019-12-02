@@ -20,18 +20,18 @@ import { User } from 'src/user/user.decorator';
 export class TweetController {
   private logger = new Logger('TweetController');
 
-  constructor(private ideaService: TweetService) {}
+  constructor(private tweetService: TweetService) {}
 
   private logData(options: any) {
     options.user && this.logger.log('USER ' + JSON.stringify(options.user));
     options.data && this.logger.log('BODY ' + JSON.stringify(options.data));
-    options.id && this.logger.log('IDEA ' + JSON.stringify(options.id));
+    options.id && this.logger.log('TWEET ' + JSON.stringify(options.id));
   }
 
   @Get()
   showAllTweets() {
-    this.logger.log('show idea');
-    return this.ideaService.showAll();
+    this.logger.log('show tweet');
+    return this.tweetService.showAll();
   }
 
   @Post()
@@ -42,7 +42,7 @@ export class TweetController {
       user,
       data,
     });
-    return this.ideaService.create(user, data);
+    return this.tweetService.create(user, data);
   }
 
   @Get(':id')
@@ -50,7 +50,7 @@ export class TweetController {
     this.logData({ 
       id 
     });
-    return this.ideaService.read(id);
+    return this.tweetService.read(id);
   }
 
   @Put(':id')
@@ -58,13 +58,41 @@ export class TweetController {
   @UsePipes(new ValidationPipe())
   updateTweet(@Param('id') id: string, @User('id') user, @Body() data: Partial<TweetDTO>) {
     this.logData({ id, user, data });
-    return this.ideaService.update(id, user, data);
+    return this.tweetService.update(id, user, data);
   }
 
   @Delete(':id')
   @UseGuards(new AuthGuard())
   destroyTweet(@Param('id') id: string, @User('id') user) {
     this.logData({ id, user });
-    return this.ideaService.destroy(id, user);
+    return this.tweetService.destroy(id, user);
+  }
+
+  @Post(':id/upvote')
+  @UseGuards(new AuthGuard())
+  upvoteTweet(@Param('id') id: string, @User('id') user: string) {
+    this.logData({ id, user });
+    return this.tweetService.upvote(id, user);
+  }
+
+  @Post(':id/downvote')
+  @UseGuards(new AuthGuard())
+  downvoteTweet(@Param('id') id: string, @User('id') user: string) {
+    this.logData({ id, user });
+    return this.tweetService.downvote(id, user);
+  }
+
+  @Post(':id/bookmark')
+  @UseGuards(new AuthGuard())
+  bookmarkTweet(@Param('id') id: string, @User('id') user: string) {
+    this.logData({ id, user });
+    return this.tweetService.bookmark(id, user);
+  }
+
+  @Delete(':id/bookmark')
+  @UseGuards(new AuthGuard())
+  unbookmarkTweet(@Param('id') id: string, @User('id') user: string) {
+    this.logData({ id, user });
+    return this.tweetService.unbookmark(id, user);
   }
 }
