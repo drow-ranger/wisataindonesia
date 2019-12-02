@@ -41,7 +41,7 @@ export class UserEntity {
   @OneToMany(
     type => TweetEntity,
     tweet => tweet.author,
-  )
+    { cascade: true })
   tweets: TweetEntity[];
 
   @ManyToMany(

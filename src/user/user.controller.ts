@@ -23,8 +23,8 @@ export class UserController {
 
   @Get('api/users')
   @UseGuards(new AuthGuard())
-  showAllUsers(@User() user) {
-    return this.userSerice.showAll();
+  showAllUsers(@Query('page') page: number) {
+    return this.userSerice.showAll(page);
   }
 
   @Post('auth/login')

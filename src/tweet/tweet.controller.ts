@@ -9,6 +9,7 @@ import {
   Param,
   UsePipes,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { TweetService } from './tweet.service';
 import { TweetDTO } from './tweet.dto';
@@ -29,9 +30,13 @@ export class TweetController {
   }
 
   @Get()
-  showAllTweets() {
-    this.logger.log('show tweet');
-    return this.tweetService.showAll();
+  showAllTweets(@Query('page') page: number) {
+    return this.tweetService.showAll(page);
+  }
+
+  @Get('/newest')
+  showNewestTweets(@Query('page') page: number) {
+    return this.tweetService.showAll(page, true);
   }
 
   @Post()

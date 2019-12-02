@@ -54,9 +54,12 @@ export class TweetService {
     return tweet;
   }
 
-  async showAll(): Promise<TweetRO[]> {
+  async showAll(page: number = 1, newest?: boolean): Promise<TweetRO[]> {
     const tweets = await this.tweetRepository.find({ 
-      relations: ['author', 'upvotes', 'downvotes'],
+      relations: ['author', 'upvotes', 'downvotes', 'comments'],
+      take: 50,
+      skip: 50 * (page - 1),
+      order: newest && { created: 'DESC' },
     });
     return tweets.map(tweet => this.toResponseObject(tweet));
   }
@@ -64,7 +67,7 @@ export class TweetService {
   async read(id: string): Promise<TweetRO> {
     const tweet = await this.tweetRepository.findOne({ 
       where: { id },
-      relations: ['author', 'upvotes', 'downvotes'],
+      relations: ['author', 'upvotes', 'downvotes', 'comments'],
     });
     if (!tweet) {
       throw new HttpException('Not found', HttpStatus.NOT_FOUND);
@@ -89,7 +92,7 @@ export class TweetService {
   async update(id: string, userId: string, data: Partial<TweetDTO>): Promise<TweetRO> {
     let tweet = await this.tweetRepository.findOne({ 
       where: { id },
-      relations: ['author'],
+      relations: ['author', 'upvotes', 'downvotes', 'comments'],
     });
     if (!tweet) {
       throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
@@ -119,7 +122,7 @@ export class TweetService {
   async upvote(id: string, userId: string) {
     let tweet = await this.tweetRepository.findOne({
       where: { id },
-      relations: ['author', 'upvotes', 'downvotes'],
+      relations: ['author', 'upvotes', 'downvotes', 'comments'],
     });
     const user = await this.userRepository.findOne({ where: { id: userId } });
     tweet = await this.vote(tweet, user, Votes.UP);
@@ -130,7 +133,7 @@ export class TweetService {
   async downvote(id: string, userId: string) {
     let tweet = await this.tweetRepository.findOne({
       where: { id },
-      relations: ['author', 'upvotes', 'downvotes'],
+      relations: ['author', 'upvotes', 'downvotes', 'comments'],
     });
     const user = await this.userRepository.findOne({ where: { id: userId } });
     tweet = await this.vote(tweet, user, Votes.DOWN);
